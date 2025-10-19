@@ -6,6 +6,10 @@
 **/*.env
 **/venv/
 
+# Python virtual environments
+venv/
+fapi/
+
 # Node / Frontend
 frontend/node_modules/
 frontend/dist/
