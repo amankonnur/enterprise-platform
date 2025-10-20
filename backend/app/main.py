@@ -37,3 +37,28 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 @app.get("/me", response_model=schemas.UserOut)
 def read_users_me(current_user: models.User = Depends(auth.get_current_user)):
     return current_user
+
+
+# --- REGISTER ENDPOINT ---
+@app.post("/register", response_model=schemas.UserOut)
+def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    
+    # Check if email already exists
+    existing_user = db.query(models.User).filter(models.User.email == user.email).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+
+    # Hash password before saving
+    hashed_password = utils.hash_password(user.password)
+
+    new_user = models.User(
+        full_name=user.full_name,
+        email=user.email,
+        hashed_password=hashed_password,
+        role=user.role,
+    )
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
