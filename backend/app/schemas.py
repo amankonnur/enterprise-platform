@@ -52,3 +52,87 @@ class UserResponse(UserBase):
 
     class Config:
         orm_mode = True  # Allows conversion from SQLAlchemy models
+
+from pydantic import BaseModel
+from typing import Optional
+import enum
+from datetime import datetime
+
+class ProjectStatus(str, enum.Enum):
+    PLANNING = "planning"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    ON_HOLD = "on_hold"
+
+
+class ProjectBase(BaseModel):
+    name: str
+    description: Optional[str] = None
+    status: Optional[ProjectStatus] = ProjectStatus.PLANNING
+
+
+class ProjectCreate(ProjectBase):
+    manager_id: int
+
+
+class ProjectOut(ProjectBase):
+    id: int
+    created_at: datetime
+    manager_id: int
+
+    class Config:
+        orm_mode = True
+
+
+class TaskStatus(str, enum.Enum):
+    TODO = "todo"
+    IN_PROGRESS = "in_progress"
+    DONE = "done"
+
+
+class TaskBase(BaseModel):
+    title: str
+    description: Optional[str] = None
+    status: Optional[TaskStatus] = TaskStatus.TODO
+
+
+class TaskCreate(TaskBase):
+    project_id: int
+    assignee_id: int
+
+
+class TaskOut(TaskBase):
+    id: int
+    created_at: datetime
+    project_id: int
+    assignee_id: int
+
+    class Config:
+        orm_mode = True
+
+class TicketStatus(str, enum.Enum):
+    OPEN = "open"
+    IN_PROGRESS = "in_progress"
+    RESOLVED = "resolved"
+    CLOSED = "closed"
+
+
+class TicketBase(BaseModel):
+    subject: str
+    description: Optional[str] = None
+    status: Optional[TicketStatus] = TicketStatus.OPEN
+
+
+class TicketCreate(TicketBase):
+    client_id: int
+    assigned_to_id: Optional[int] = None
+
+
+class TicketOut(TicketBase):
+    id: int
+    created_at: datetime
+    client_id: int
+    assigned_to_id: Optional[int] = None
+
+    class Config:
+        orm_mode = True
