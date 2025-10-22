@@ -6,6 +6,11 @@ from . import database, models, utils, auth, schemas
 
 app = FastAPI()
 
+
+from .routers import task
+app.include_router(task.router)
+
+
 @app.get("/")
 def root():
     db = SessionLocal()
@@ -62,3 +67,4 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     return new_user
+

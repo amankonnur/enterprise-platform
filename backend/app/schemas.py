@@ -136,3 +136,29 @@ class TicketOut(TicketBase):
 
     class Config:
         orm_mode = True
+
+
+from typing import Optional
+from datetime import datetime
+from pydantic import BaseModel
+
+class TaskCreate(BaseModel):
+    title: str
+    description: Optional[str]
+    status: Optional[str] = "Pending"
+    priority: Optional[str] = "Medium"
+    project_id: int
+    assigned_to: Optional[int]
+
+class TaskOut(BaseModel):
+    id: int
+    title: str
+    description: Optional[str]
+    status: str
+    priority: str
+    project_id: int
+    assigned_to: Optional[int]
+    created_at: datetime
+
+    class Config:
+        orm_mode = True

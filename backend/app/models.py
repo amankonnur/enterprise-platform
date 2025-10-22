@@ -93,3 +93,24 @@ class Ticket(Base):
 
     client = relationship("User", foreign_keys=[client_id])
     assigned_to = relationship("User", foreign_keys=[assigned_to_id])
+
+
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime
+from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
+
+class Task(Base):
+    __tablename__ = "tasks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    description = Column(Text)
+    status = Column(String, default="Pending")  # Pending, In Progress, Completed
+    priority = Column(String, default="Medium") # Low, Medium, High
+    project_id = Column(Integer, ForeignKey("projects.id"))
+    assigned_to = Column(Integer, ForeignKey("users.id"))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Relationships
+    project = relationship("Project", backref="tasks")
+    assignee = relationship("User", backref="tasks_assigned")
